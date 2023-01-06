@@ -38,15 +38,63 @@
         public function register($login, $password, $password2)
         {
             // vérification des champs
-            if ($login != "" && $password != "" && $password2 != "") {
+            if ($login != "" && $password != "" && $password2 != "") 
+            {
                 // vérification de la correspondance des mots de passe
-                if ($password != $password2) {
+                if ($password != $password2) 
+                {
                     echo "Les mots de passe ne correspondent pas !";
                     return;
                 }
-                // cryptage du mot de passe
+                else 
+                {
+                    // les vérifications sont faites, on passe à l'enregistrement dans la base de données:
+                    //cryptage du mot de passe
+                    $password = password_hash($password, PASSWORD_DEFAULT);
+                    // requête de sélection
+                    $request = "SELECT * FROM players WHERE login = :login ";
+                    // préparation de la requête
+                    $select = $this->bdd->prepare($request);
+                    // exécution de la requête avec liaison des paramètres
+                    $select->execute(array(
+                        ':login' => $login
+                    ));
+                    // récupération des résultats
+                    $fetch = $select->fetchAll();
+                    $row = count($fetch);
+                    // vérification de disponibilité du login et insertion dans la base de données
+                    if ($row == 0) {
+                        $register = "INSERT INTO players (login, password) VALUES
+                        (:login, :password)";
+                        // préparation de la requête             
+                        $insert = $this->bdd->prepare($register);
+                        // exécution de la requête avec liaison des paramètres
+                        $insert->execute(array(
+                            ':login' => $login,
+                            ':password' => $password
+                        ));
+                        echo "Inscription réussie !";
+                        header("Refresh: 3; url=login.php");
+                    }
+                    else {
+                        $error = "Ce login existe déjà !";
+                        return $error;
+                    }
+                }
+            }
+            else 
+            {
+                echo "Vous devez remplir tous les champs !";
+                return;
+            }
 
+        } // fin de la méthode register
 
+        public function connect($login, $password)
+        {   
+            // vérification des champs
+            if($login != "" && $password != "") 
+            {
                 // requête de sélection
                 $request = "SELECT * FROM players WHERE login = :login ";
                 // préparation de la requête
@@ -56,70 +104,39 @@
                     ':login' => $login
                 ));
                 // récupération des résultats
-                $fetch = $select->fetchAll();
-                $row = count($fetch);
-                // vérification de l'existence du login et insertion dans la base de données
-                if ($row == 0) {
-                    $register = "INSERT INTO players (login, password) VALUES
-                    (:login, :password)";
-                    // préparation de la requête             
-                    $insert = $this->bdd->prepare($register);
-                    // exécution de la requête avec liaison des paramètres
-                    $insert->execute(array(
-                        ':login' => $login,
-                        ':password' => $password
-                    ));
-                    echo "Inscription réussie !";
-                    header("Refresh: 2; url=login.php");
-                }
-                else {
-                    $error = "Ce login existe déjà !";
-                    return $error;
-                }
-            }
-            else {
-                echo "Vous devez remplir tous les champs !";
-            }
-        }
-
-        public function connect($login, $password)
-        {   // vérification des champs
-            if($login != "" && $password != "") {
-                $request = "SELECT * FROM players WHERE login = :login AND password = :password ";
-                // préparation de la requête
-                $select = $this->bdd->prepare($request);
-                // exécution de la requête avec liaison des paramètres
-                $select->execute(array(
-                    ':login' => $login,
-                    ':password' => $password
-                ));
-                // récupération des résultats
                 $result = $select->fetchAll();
-                // vérification de l'existence du login et mot de passe
-                if(count($result) == 1) {
+                // vérification de l'existence du login
+                if(count($result) == 1) 
+                {
                     $select->execute(array(
-                        ':login' => $login,
-                        ':password' => $password
+                    ':login' => $login
                     ));
                     // récupération des résultats
                     $result = $select->fetch(PDO::FETCH_ASSOC);
-                    // création de la session
-                    $_SESSION['user']= [
-                        'id' => $result['id'],
-                        'login' => $result['login'],
-                        'password' => $result['password'],
-                    ]; 
-                    echo "Connexion réussie !";   
-                    header("Refresh: 1;url=index.php");  
-                }
-                else {
-                    echo "Login ou mot de passe incorrect";
+                    // vérification du mot de passe
+                    if(password_verify($password, $result['password'])) 
+                    {
+                        // création de la session
+                        $_SESSION['user']= [
+                            'id' => $result['id'],
+                            'login' => $result['login'],
+                            'password' => $result['password'],
+                        ]; 
+                        echo "Connexion réussie !";   
+                        header("Refresh: 1;url=game.php"); 
+                    }
+                    else 
+                    {
+                        echo "Mot de passe incorrect !";
+                        return;
+                    } 
                 }
             }
-            else {
+            else 
+            {
                 echo "Veuillez saisir un login et un mot de passe";
             }
-        }
+        } // fin de la méthode connect
 
         public function disconnect()
         {   // vérification de la connexion
@@ -128,7 +145,7 @@
                 // fermeture de la connexion
                 echo "Dommage de vous voir partir !";
                 session_destroy();
-                header("location: index.php");
+                header("Refresh: 1;url=index.php");
                 }
                 else {
                     echo "Connectez-vous pour jouer !";
@@ -262,16 +279,6 @@
             else {
                 echo "Connectez-vous !";
             }
-        }
-
-        public function setLogin($login)
-        {
-            $this->login = $new_login;
-        }
-        
-        public function setPassword($new_user_pass)
-        {
-            $this->password = $new_password;
         }
 
     }

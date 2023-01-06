@@ -1,15 +1,17 @@
 <?php
 include 'includes/header.php';
 require 'lib/Player.php';
-
-
-
 ?>
 
-<main>
+<?php
+if(!empty($_POST)) {
+
+    $user = new Player(); 
+    $user->connect($_POST['login'], $_POST['password']);
+}
+?>
+<main class="container">
     <a href="index.php">Retour</a>
-    <div class="menu">
-        <div class="liensmenu">
         <h1>Connexion</h1>
             <form method="post">
                 <label for="login">Login</label>
@@ -18,19 +20,10 @@ require 'lib/Player.php';
                 <input type="password" name="password" id="password" required>
                 <input type="submit" value="Connexion">                
             </form>
-            <p class="text-primery">Vous n'avez pas de compte ? <a href="register.php">Inscrivez-vous</a></p>
-        </div>
-    </div>
-
-
-
-
+            <p>Vous n'avez pas de compte ? <a href="register.php">Inscrivez-vous</a></p>
 
 </main>
-<?php
-$user = new Player(); 
-$user->connect($_POST['login'] , $_POST['password']);
-?>
+
 
 <?php
 include 'includes/footer.php';

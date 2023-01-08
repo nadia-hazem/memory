@@ -1,32 +1,54 @@
 <?php
-include 'includes/header.php';
-require 'lib/Player.php';
 
+// Include the Player class
+require_once 'lib/Player.php';
+
+// Create an instance of the Player class
+$player = new Player();
+
+// Check if the form has been submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get the form data
+    $login = trim($_POST['login']);
+    $password = trim($_POST['password']);
+    $password2 = trim($_POST['password2']);
+
+    // Validate the form data
+    if (empty($login)) {
+        $error = "Please enter a login.";
+    }
+    elseif (empty($password)) {
+        $error = "Please enter a password.";
+    }
+    elseif (empty($password2)) {
+        $error = "Please confirm your password.";
+    }
+    elseif ($password !== $password2) {
+        $error = "Passwords do not match!";
+    }
+    else {
+        // The form data is valid, continue with registration
+        $error = $player->register($login, $password);
+    }
+}
 ?>
 
-<main>
-    <a href="index.php">Retour</a>
-    <div class="menu">
+<!-- Register form -->
+<form method="post" action="register.php">
+    <label for="login">Login:</label>
+    <input type="text" id="login" name="login">
+    <br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password">
+    <br>
+    <label for="password2">Confirm Password:</label>
+    <input type="password" id="password2" name="password2">
+    <br>
+    <input type="submit" value="Register">
+</form>
 
-            <h1>Inscription</h1>
-
-            <form method="post">
-                Login : <input type="text" name="login">
-                <br />
-                Mot de passe : <input type="password" name="password">
-                <br />
-                Confirmez le mot de passe : <input type="password" name="password2">
-                <input type="submit" value="Inscription">
-            </form>
-
-
-    </div>
-
-</main>
-
-<?php 
-$user = new Player(); 
-$user->register($_POST['login'], $_POST['password'], $_POST['password2']);
+<?php
+if (isset($error)) {
+    echo $error;
+}
 ?>
-
-<?php include 'includes/footer.php'; ?>

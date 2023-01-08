@@ -1,53 +1,20 @@
 <?php
 
-class Card
-{
-    private $id;
-    private $value;
-    private $image;
-    private $isFlipped;
+    require_once 'lib/Game.php';
 
-    public function __construct($id, $value, $image)
+
+    class Card extends Game
     {
-        $this->id = $id;
-        $this->value = $value;
-        $this->image = $image;
-        $this->isFlipped = false;
+        public $value;
+        public $image;
+        public $flipped;
+
+        public function __construct($value, $image)
+        {
+            $this->value = $value;
+            $this->image = $image;
+            $this->flipped = false;
+        }
     }
 
-    public function createRank($data, $rank) 
-    {
-        extract($data); ?>
-        <tr class="scored" id="rank-<?= $rank ?>">
-            <td><a href="profil.php?id=<?= $data["id_user"] ?>" class="user-link"><img src="<?= $avatar ?>" class=""/><span>&nbsp;<?= $login ?></span></a></td>
-            <td><?= $time ?></td>
-            <td><?= $attempts ?></td>
-            <td><?= $level ?></td>
-        </tr>
-    <?php }
-
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    public function getImage()
-    {
-        return $this->image;
-    }
-
-    public function getIsFlipped()
-    {
-        return $this->isFlipped;
-    }
-
-    public function setIsFlipped($isFlipped)
-    {
-        $this->isFlipped = $isFlipped;
-    }
-}
+?>

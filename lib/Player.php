@@ -1,25 +1,26 @@
 
 <?php
-    session_start();
+
 
     class Player
     {
         // attributs
         private $id;
-        private $login;
+        public $login;
         private $password;
         private $bdd;
 
         // Méthodes  
         public function __construct() { 
-            // connexion à la base de données
             $host = 'localhost';
             $dbname = 'memory';
             $dbuser = 'root';
             $dbpass = '';
+
+            /* $this->bdd = new PDO('mysql:host=localhost; dbname=memory; charset=utf8', 'root', ''); */
             try {
-            $this->bdd = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $dbuser, $dbpass);
-            $this->bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $this->bdd = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $dbuser, $dbpass);
+                $this->bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } 
             catch (PDOException $e) 
             {
@@ -31,132 +32,107 @@
             {
                 $this->id = $_SESSION['user']['id'];
                 $this->login = $_SESSION['user']['login'];
-                $this->password = $_SESSION['user']['password'];
+                $this->password = $_SESSION['user']['password'];  
             }
         } 
 
-        public function register($login, $password, $password2)
+        public function register($login, $password)
         {
-            // vérification des champs
-            if ($login != "" && $password != "" && $password2 != "") 
-            {
-                // vérification de la correspondance des mots de passe
-                if ($password != $password2) 
-                {
-                    echo "Les mots de passe ne correspondent pas !";
-                    return;
-                }
-                else 
-                {
-                    // les vérifications sont faites, on passe à l'enregistrement dans la base de données:
-                    //cryptage du mot de passe
-                    $password = password_hash($password, PASSWORD_DEFAULT);
-                    // requête de sélection
-                    $request = "SELECT * FROM players WHERE login = :login ";
-                    // préparation de la requête
-                    $select = $this->bdd->prepare($request);
-                    // exécution de la requête avec liaison des paramètres
-                    $select->execute(array(
-                        ':login' => $login
+            // Validate the form fields
+            if ($login != "" && $password != "") {
+                // Check if the login already exists
+                $request = "SELECT * FROM players WHERE login = :login ";
+                // Prepare the SQL statement
+                $select = $this->bdd->prepare($request);
+                // Execute the statement with parameter binding
+                $select->execute(array(':login' => $login));
+                // Retrieve the results
+                $fetch = $select->fetchAll();
+                $row = count($fetch);
+                
+                // Hash the password
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                
+                // If the login does not exist, insert the new login and hashed password into the database
+                if ($row == 0) {
+                    $register = "INSERT INTO players (login, password) VALUES (:login, :password)";
+                    // Prepare the SQL statement
+                    $insert = $this->bdd->prepare($register);
+                    // Execute the statement with parameter binding
+                    $insert->execute(array(
+                        ':login' => $login,
+                        ':password' => $hashed_password
                     ));
-                    // récupération des résultats
-                    $fetch = $select->fetchAll();
-                    $row = count($fetch);
-                    // vérification de disponibilité du login et insertion dans la base de données
-                    if ($row == 0) {
-                        $register = "INSERT INTO players (login, password) VALUES
-                        (:login, :password)";
-                        // préparation de la requête             
-                        $insert = $this->bdd->prepare($register);
-                        // exécution de la requête avec liaison des paramètres
-                        $insert->execute(array(
-                            ':login' => $login,
-                            ':password' => $password
-                        ));
-                        echo "Inscription réussie !";
-                        header("Refresh: 3; url=login.php");
-                    }
-                    else {
-                        $error = "Ce login existe déjà !";
-                        return $error;
-                    }
+                    echo "Registration successful!";
+                    header('Location: login.php');
+                }
+                else {
+                    $error = "This login already exists!";
+                    return $error;
                 }
             }
-            else 
-            {
-                echo "Vous devez remplir tous les champs !";
-                return;
+            else {
+                echo "You must fill in all fields!";
             }
-
-        } // fin de la méthode register
+        }
+                
 
         public function connect($login, $password)
-        {   
-            // vérification des champs
-            if($login != "" && $password != "") 
-            {
-                // requête de sélection
-                $request = "SELECT * FROM players WHERE login = :login ";
-                // préparation de la requête
+        {
+            // Check if login and password fields are not empty
+            if ($login != "" && $password != "") {
+                // Retrieve hashed password from database for the specified login
+                $request = "SELECT password FROM players WHERE login = :login";
                 $select = $this->bdd->prepare($request);
-                // exécution de la requête avec liaison des paramètres
-                $select->execute(array(
-                    ':login' => $login
-                ));
-                // récupération des résultats
-                $result = $select->fetchAll();
-                // vérification de l'existence du login
-                if(count($result) == 1) 
+                $select->execute(array(':login' => $login));
+                $hashed_password = $select->fetchColumn();
+                
+                // Verify the password
+                if (password_verify($password, $hashed_password)) {
+                    // Password is correct, continue with login
+                    $request = "SELECT * FROM players WHERE login = :login";
+                    // Prepare the SQL statement
+                    $select = $this->bdd->prepare($request);
+                    // Execute the statement with parameter binding
+                    $select->execute(array(':login' => $login));
+                    $result = $select->fetch();
+                    
+                    // Create the session
+                    $_SESSION['user'] = [
+                        'id' => $result['id'],
+                        'login' => $result['login'],
+                        'password' => $result['password'],
+                    ];
+                    // Redirect to the profile page
+                    header('Location: profile.php');
+                } 
+                else 
                 {
-                    $select->execute(array(
-                    ':login' => $login
-                    ));
-                    // récupération des résultats
-                    $result = $select->fetch(PDO::FETCH_ASSOC);
-                    // vérification du mot de passe
-                    if(password_verify($password, $result['password'])) 
-                    {
-                        // création de la session
-                        $_SESSION['user']= [
-                            'id' => $result['id'],
-                            'login' => $result['login'],
-                            'password' => $result['password'],
-                        ]; 
-                        echo "Connexion réussie !";   
-                        header("Refresh: 1;url=game.php"); 
-                    }
-                    else 
-                    {
-                        echo "Mot de passe incorrect !";
-                        return;
-                    } 
+                    echo "Incorrect login or password!";
                 }
+            } else {
+                echo "You must fill in all fields!";
             }
-            else 
-            {
-                echo "Veuillez saisir un login et un mot de passe";
-            }
-        } // fin de la méthode connect
+        }
 
         public function disconnect()
         {   // vérification de la connexion
             if($this->isConnected()) 
                 {
                 // fermeture de la connexion
-                echo "Dommage de vous voir partir !";
+                echo "déconnexion réussie";
                 session_destroy();
-                header("Refresh: 1;url=index.php");
                 }
                 else {
-                    echo "Connectez-vous pour jouer !";
+                    echo "Vous n'êtes pas connecté(e) !";
                 }
         }
 
-        public function delete()
+        public function delete($playerId)
         {   
             if($this->isConnected()) 
-            {   // requête de suppression
-                $delete = "DELETE FROM players WHERE id = :id ";
+            {   // requête de suppression avec INNERJOIN pour supprimer les scores associés
+                $delete = "DELETE players, player_score, global_score FROM players INNER JOIN player_score ON players.id = player_score.player_id INNER JOIN global_score ON player_score.score_id = global_score.id WHERE players.id = :id ";
                 // préparation de la requête
                 $delete = $this->bdd->prepare($delete);
                 // exécution de la requête avec liaison des paramètres
@@ -181,7 +157,8 @@
             $this->bdd = null; 
         }
 
-        public function update($login, $password, $email, $firstname, $lastname)
+
+        public function update($login, $password)
         {
             if($this->isConnected())
             {
@@ -190,7 +167,7 @@
                     $_SESSION['user']['login'] = $login;
                     $_SESSION['user']['password'] = $password;
                     // vérification de l'existence du login
-                    $request = "SELECT * FROM players WHERE login = :login ";
+                    $request = "SELECT * FROM utilisateurs WHERE login = :login ";
                     // préparation de la requête 
                     $select = $this->bdd->prepare($request);
                     // exécution de la requête avec liaison des paramètres
@@ -203,7 +180,7 @@
                     // vérification de la disponibilité du login et mise à jour dans la base de données
                     if ($row == 0) {
                         // requête de mise à jour
-                        $update = "UPDATE players SET login = :login, password = :password WHERE id = :id ";
+                        $update = "UPDATE utilisateurs SET login = :login, password = :password, email = :email, firstname = :firstname, lastname = :lastname WHERE id = :id ";
                         // préparation de la requête
                         $select = $this->bdd->prepare($update);
                         // exécution de la requête avec liaison des paramètres
@@ -229,7 +206,7 @@
 
         public function isConnected()
         {
-            if($this->id != null && $this->login != null) {
+            if($this->id != null && $this->login != null && $this->password != null) {
                 return true;
             }
             else {
@@ -247,7 +224,6 @@
                             <th>id</td>
                             <th>login</td>
                             <th>password</td>
-
                         </tr>
                     </thead>
                     <tbody>
@@ -255,16 +231,19 @@
                             <th><?php echo $this->id; ?></td>
                             <td><?php echo $this->login; ?></td>
                             <td><?php echo $this->password; ?></td>
-
                         </tr>
                     </tbody>
                 </table>
 
                 <?php
-
+                /* echo "login : " . $this->login . "<br>";
+                echo "password : " . $this->password . "<br>";
+                echo "email : " . $this->email . "<br>";
+                echo "firstname : " . $this->firstname . "<br>";
+                echo "lastname : " . $this->lastname . "<br>"; */
             }
             else {
-                echo "Vous devez être connecté(e) pour voir vos scores !";
+                echo "Vous devez être connecté(e) pour voir vos informations !";
             
             }
 
@@ -274,16 +253,15 @@
         {
             if($this->isConnected()) 
             {
-                return $this->login;
+                echo "login : " . $this->login . "<br>";
             }
             else {
-                echo "Connectez-vous !";
+                echo "Vous devez être connecté(e) pour voir vos informations !";
             }
         }
-
     }
 
-$user = new Player();
+//$user = new Userpdo();
 // test register PDO   //OK
 //echo $user->register('test1', 'test1', 'test1@test.fr', 'testnom1', 'testprenom1');
 
@@ -304,15 +282,6 @@ $user = new Player();
 
 //test getLogin PDO //OK
 //echo $user->getLogin();
-
-//test getEmail PDO //OK
-//echo $user->getEmail();
-
-//test getFirstname PDO //OK
-//echo $user->getFirstname();
-
-//test getLastname PDO //OK
-//echo $user->getLastname();
 
 /* echo "<br>";
 echo $user->login;

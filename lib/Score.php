@@ -1,30 +1,45 @@
-<?php
-include 'includes/header.php';
-require 'lib/Player.php';
-?>
-
 
 <?php
-$login = $_SESSION['login'];
-$password = $_SESSION['password'];
-$user = new Player(); 
-$user->connect($login, $password);
-$user->getLogin()
-?>
-<h3>Bienvenue <?php $login ?></h3>
+    require_once 'lib/Player.php';
+    require_once 'lib/Game.php';
+    
+    class Score extends Player
+    {
+        // PDO object
+        private $pdo;
 
-<main class="container">
-    <a href="index.php">Retour</a>
-        <h1>Wall of fame</h1>
+        // Constructor
+        public function __construct($pdo) {
+            $this->pdo = $pdo;
+        }
 
-        <div class="liensmenu">
-            <a class="btn" href="profil.php"><h1>Profil</h1></a>
-            <a class="btn" href="game.php"><h1>Jouer</h1></a>
-            <a class="btn" href="index.php?exit=true"><h1>Déconnexion</h1></a>
-        </div>
-</main>
+        // Get the players
+        public function getPlayers() {
+            $stmt = $this->pdo->query("SELECT * FROM players");
+            return $stmt->fetchAll();
+        }
 
+        // Get the player scores
+        public function getPlayerScores($player_id) {
+            $stmt = $this->pdo->query("SELECT * FROM player_scores WHERE player_id = $player_id");
+            return $stmt->fetchAll();
+        }
 
-<?php
-include 'includes/footer.php';
+        // Get the global scores
+        public function getGlobalScores() {
+            $stmt = $this->pdo->query("SELECT * FROM global_scores");
+            return $stmt->fetchAll();
+        }
+
+        public function saveScore($player_id, $score, $level) {
+            // Save the score to the player_scores table
+            $stmt = $this->pdo->prepare("INSERT INTO player_scores (player_id, score, level) VALUES (:player_id, :score, :level)");
+            $stmt->execute(['player_id' => $player_id, 'score' => $score, 'level' => $level]);
+
+            // Save the score to the global_scores table
+            $stmt = $this->pdo->prepare("INSERT INTO global_scores (player_id, score, level) VALUES (:player_id, :score, :level)");
+            $stmt->execute(['player_id' => $player_id, 'score' => $score, 'level' => $level]);
+        }
+    }
+
 ?>

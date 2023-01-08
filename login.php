@@ -1,30 +1,30 @@
 <?php
-include 'includes/header.php';
-require 'lib/Player.php';
-?>
 
-<?php
-if(!empty($_POST)) {
+// Include the Player class
+require_once 'lib/Player.php';
 
-    $user = new Player(); 
-    $user->connect($_POST['login'], $_POST['password']);
+// Create an instance of the Player class
+$player = new Player();
+
+// Check if the form has been submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get the form data
+    $login = trim($_POST['login']);
+    $password = trim($_POST['password']);
+
+    // Attempt to log the user in
+    $player->connect($login, $password);
 }
+
 ?>
-<main class="container">
-    <a href="index.php">Retour</a>
-        <h1>Connexion</h1>
-            <form method="post">
-                <label for="login">Login</label>
-                <input type="text" name="login" id="login" required>
-                <label for="password">Password</label>
-                <input type="password" name="password" id="password" required>
-                <input type="submit" value="Connexion">                
-            </form>
-            <p>Vous n'avez pas de compte ? <a href="register.php">Inscrivez-vous</a></p>
 
-</main>
-
-
-<?php
-include 'includes/footer.php';
-?>
+<!-- Login form -->
+<form method="post" action="login.php">
+    <label for="login">Login:</label>
+    <input type="text" id="login" name="login">
+    <br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password">
+    <br>
+    <input type="submit" value="Log In">
+</form>

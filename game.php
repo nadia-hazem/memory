@@ -1,5 +1,8 @@
-<?php
+<?php session_start() ?>
+<?php require_once 'includes/header.php'; ?>
+<?php require_once 'autoloader.php'; ?>
 
+<?php
 session_start();
 
 // Check if the user is logged in
@@ -8,19 +11,11 @@ if (!isset($_SESSION['username'])) {
 header('Location: login.php');
 exit;
 }
-// Include the necessary classes
-require_once 'lib/Player.php';
-require_once 'lib/Card.php';
-require_once 'lib/Score.php';
-require_once 'includes/header.php';
 
 //initialiser les variables
 $pdo = new PDO('mysql:host=localhost;dbname=memory', 'root', '');
 $login = "";
 $score = 0;
-// Connect to the database
-$database = new Database('localhost', 'memory', 'root', '');
-$database->connect();
 
 // Get the level selected by the user
 $level = intval($_POST['level']);
@@ -72,8 +67,8 @@ if ($numFlipped == 1) {
 
 if ($numPairs == 0) {
 // All pairs have been found, end the game and add the score to the database
-$player = new Player($pdo, $login, $password);
-$player->addScore($_SESSION['username'], $level, $score);
+$Score = new Score($db);
+$player->saveScore($_SESSION['username'], $level, $score);
 }
 
 ?>

@@ -1,24 +1,42 @@
 
 h1 {
     text-align: center;
+    font-family: "Arial";
+    padding: 2rem 0 3rem 0;
 }
-
-main.container {
+a {
+    text-decoration: none;
+}
+.back {
+    float: left;
+    background-size: cover;
+    height: 59px;
+    width: 120px;
+    border: none;
+    cursor: pointer;
+    margin: 1rem; 
+}
+main.main {
+    width: 100vw;
+    height: 100vh;
     background-size: cover;
     min-height: 100vh;
+}
+.container {
+    background-size: cover;
+    min-height: 100vh;
+    width: 35%!important;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
 }
 
-main.container a {
+.container a, .container button {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: center!important;
     align-items: center;
-    text-decoration: none;
-    text-align: center;
+    text-decoration: none!important;
 }
 
 nav {

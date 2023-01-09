@@ -1,9 +1,7 @@
 <?php
-require_once 'lib/Player.php';
-require_once 'lib/Score.php';
-require_once 'lib/Card.php';
+require_once 'autoloader.php';
 
-class Game
+class Game extends DbConnect
 {
     private $player;
     private $score;

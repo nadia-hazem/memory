@@ -2,6 +2,13 @@
 <?php require_once 'includes/header.php'; ?>
 
 <?php
+
+if ($player->connect($_POST['login'], $_POST['password'])) {
+    $_SESSION['login'] = $_POST['login'];
+    header('Location: index.php');
+    exit();
+}
+
 // Créer une instance de la classe DbConnect
 $db = new DbConnect();
 // Créer une instance de la classe Player

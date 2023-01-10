@@ -2,6 +2,14 @@
 <?php require_once 'includes/header.php'; ?>
 
 <?php
+$_SESSION['login'] = $login; // Set la session login
+// vérifier l'état du joueur, pour la protection des pages privées
+if (!isset($_SESSION['login'])) {
+    // Le joueur n'est pas connecté, rediriger vers la page de connexion
+    header('Location: login.php');
+    exit();
+}
+
 // Créer une instance de la classe DbConnect
 $db = new DbConnect();
 // Créer une instance de la classe Player
@@ -11,7 +19,7 @@ $player = new Player($db);
 if ($player->isConnected()) {
     // Créer une instance de la classe Score
     $score = new Score($db);
-    
+    var_dump($_SESSION['login']);
     // Récupérer les données du joueur
     $playerScore = $score->getPlayerScore($player->id);
     if (!empty($playerScore)) {

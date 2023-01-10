@@ -3,6 +3,7 @@ require_once 'includes/header.php';
 
 // Open session
 session_start();
+$_SESSION['login'] = $login;
 if(!isset($_SESSION['login'])){
     //The login session is not set. redirect to login page.
     header('Location: login.php');

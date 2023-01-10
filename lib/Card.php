@@ -1,17 +1,25 @@
 <?php
-require_once 'autoloader.php';
+class Card {
+    private $frontImage;
+    private $backImage;
+    private $flipped = false;
 
-class Card extends Game
-{
-    public $value;
-    public $image;
-    public $flipped;
-
-    public function __construct($value, $image)
-    {
-        $this->value = $value;
-        $this->image = $image;
-        $this->flipped = false;
+    public function __construct() {
+    }
+    public function setFrontImage($frontImage){
+        $this->frontImage = $frontImage;
+    }
+    public function getFrontImage(){
+        return $this->frontImage;
+    }
+    public function setBackImage($backImage){
+        $this->backImage = $backImage;
+    }
+    public function getBackImage(){
+        return $this->backImage;
+    }
+    public function flip() {
+        $this->flipped = !$this->flipped;
     }
 }
 

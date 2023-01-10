@@ -1,6 +1,5 @@
 <?php session_start() ?>
 <?php require_once 'includes/header.php'; ?>
-<?php require_once 'autoloader.php'; ?>
 
 <?php
 // Create an instance of the Score class

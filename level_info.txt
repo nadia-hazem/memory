@@ -1,0 +1,5 @@
+Une façon possible serait d'ajouter la colonne "level" à la table "player_score". Cela vous permettrait de stocker les scores des joueurs par niveau, ce qui vous permettrait de générer des statistiques détaillées par niveau. Vous pourriez également conserver l'historique des scores des joueurs pour chaque niveau.
+
+Une autre possibilité serait d'ajouter la colonne "level" à la table "global_score". Cela vous permettrait de stocker des statistiques globales pour chaque niveau, comme le meilleur score global pour chaque niveau.
+
+Enfin, vous pourriez également ajouter la colonne "level" à la table "player" et stocker le dernier niveau sur lequel le joueur a joué. Cela vous permettrait de reprendre le jeu là où le joueur l'a laissé la dernière fois.

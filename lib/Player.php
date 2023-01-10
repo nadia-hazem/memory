@@ -15,7 +15,6 @@ class Player
     {
         $this->db = $db;
     } 
-
     public function register($login, $password)
     {
         // Validate the form fields
@@ -55,8 +54,6 @@ class Player
             echo "You must fill in all fields!";
         }
     }
-            
-
     public function connect($login, $password)
     {
         // Check if login and password fields are not empty
@@ -97,8 +94,6 @@ class Player
             echo "Vous devez remplir tous les champs !";
         }
     }
-    
-
     public function disconnect()
     {   // vérification de la connexion
         if($this->isConnected()) 
@@ -111,37 +106,27 @@ class Player
                 echo "Vous n'êtes pas connecté(e) !";
             }
     }
-
-    public function delete($playerId)
-    {   
-        if($this->isConnected()) 
-        {   // requête de suppression avec INNERJOIN pour supprimer les scores associés
-            $delete = "DELETE players, player_score, global_score FROM players INNER JOIN player_score ON players.id = player_score.player_id INNER JOIN global_score ON player_score.score_id = global_score.id WHERE players.id = :id ";
-            // préparation de la requête
-            $delete = $this->db->getPdo()->prepare($delete);
-            // exécution de la requête avec liaison des paramètres
-            $delete->execute(array(
-                ':id' => $this->id
-            ));
-            // récupération des résultats
-            $result = $delete->fetchAll();
-            // vérification de la suppression
-            if ($result == TRUE) {
-                echo "Utilisateur supprimé !"; 
-                session_destroy();
-            }
-            else{
-                echo "Erreur lors de la suppression de l'utilisateur !";
-            }
-        }
-        else {
+    public function delete()
+    {
+        if ($this->isConnected()) {
+            // Delete the player's score
+            $stmt = $this->db->getPdo()->prepare("DELETE FROM player_score WHERE player_id = :player_id");
+            $stmt->execute(['player_id' => $this->id]);
+    
+            // Delete the player's global score
+            $stmt = $this->db->getPdo()->prepare("DELETE FROM global_score WHERE player_id = :player_id");
+            $stmt->execute(['player_id' => $this->id]);
+    
+            // Delete the player
+            $stmt = $this->db->getPdo()->prepare("DELETE FROM players WHERE id = :id");
+            $stmt->execute(['id' => $this->id]);
+    
+            session_destroy();
+            echo "Utilisateur supprimé !";
+        } else {
             echo "Vous devez être connecté pour supprimer votre compte !";
         }
-        // fermeture de la connexion
-        $this->db = null; 
     }
-
-
     public function update($login, $password)
     {
         if($this->isConnected())
@@ -187,12 +172,10 @@ class Player
             echo "Vous devez être connecté pour modifier vos informations !";
         }
     }
-
     public function isConnected()
     {
         return isset($_SESSION['user']) && isset($_SESSION['user']['id']) && isset($_SESSION['user']['login']);
     }
-
     public function getAllInfos()
     {
         if($this->isConnected()) 
@@ -227,7 +210,6 @@ class Player
         }
 
     }
-
     public function getLogin()
     {
         if($this->isConnected()) 
@@ -238,13 +220,20 @@ class Player
             echo "Vous devez être connecté(e) pour voir vos informations !";
         }
     }
-
         public function getId()
     {
         return $this->id;
     }
+    public function getScore($login, $level)
+{
+    $stmt = $this->db->getPdo()->prepare("SELECT score FROM player_score WHERE login = ? AND level = ?");
+    $stmt->execute([$login, $level]);
+    $score = $stmt->fetch(PDO::FETCH_ASSOC)['score'];
+    return $score;
+}
 
 }
+
 
 //$user = new Userpdo();
 // test register PDO   //OK

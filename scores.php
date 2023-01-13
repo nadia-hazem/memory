@@ -2,26 +2,50 @@
 <?php require_once 'includes/header.php'; ?>
 
 <?php
-// Create an instance of the Score class
-$score = new Score($id, $player_id, $score, $level);
-
-// Get the player data
-$player = $player->getPlayer();
-foreach ($players as $player) {
-    echo "<h2>Player: " . $player['name'] . "</h2>";
-
-    // Get the player's individual score
-    $player_id = $player['id'];
-    $scores = $score->getPlayerScore($player_id);
-    foreach ($scores as $score) {
-        echo "Score: " . $score['score'] . " (Level " . $score['level'] . ")<br>";
-    }
+/* $_SESSION['login'] = $login; // Set la session login */
+// vérifier l'état du joueur, pour la protection des pages privées
+if (!$player->isConnected()) {
+    // Le joueur n'est pas connecté, rediriger vers la page de connexion
+    header('Location: login.php');
+    exit();
 }
 
-// Get the global score
-echo "<h2>Global Score</h2>";
-$scores = $score->getGlobalScore();
-foreach ($scores as $score) {
-    echo $score['player_name'] . ": " . $score['score'] . " (Level " . $score['level'] . ")<br>";
-}
-?>
+// Créer une instance de la classe DbConnect
+$db = new DbConnect();
+// Créer une instance de la classe Player
+$player = new Player($db);
+
+// Récupérer les données des joueurs
+    ?>
+    <body id="scores">
+        <a class="btn-back" href="index.php"><img src="assets/img/btn-back.png"></a>
+        <main class="d-flex flex-fill align-items-center justify-content-center mx-auto h-100">
+            <div class="col mx-auto">
+                <h1 class="text-center">Classement</h1>
+                <form method="get" action="">
+                    <select name="level">
+                        <option value="3">3 paires</option>
+                        <option value="4">4 paires</option>
+                        <option value="5">5 paires</option>
+                        <option value="6">6 paires</option>
+                        <option value="7">7 paires</option>
+                        <option value="8">8 paires</option>
+                        <option value="9">9 paires</option>
+                        <option value="10">10 paires</option>
+                        <option value="11">11 paires</option>
+                        <option value="12">12 paires</option>
+                    </select>
+                    <input type="submit" value="Choisir le niveau des scores" class="btn btn-danger m-2">
+                </form>
+                <?php
+                if(empty($_GET)) {
+                    $_GET['level'] = 3;
+                }
+                $player->getGlobalScore($_GET['level']);
+                ?>                  
+                
+            </div>
+
+        </main>
+
+<?php require_once 'includes/footer.php'; ?>

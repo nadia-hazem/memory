@@ -6,3 +6,4 @@ function autoloader($className) {
 
 spl_autoload_register('autoloader');
 
+?>

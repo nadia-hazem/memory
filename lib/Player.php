@@ -8,12 +8,18 @@ class Player
     public $id;
     public $login;
     private $password;
+    public $level;
+    public $score;
     private $db;
 
     // constructor
     public function __construct($db) 
     {
         $this->db = $db;
+        if (isset($_SESSION['login'])) {
+            $this->login = $_SESSION['login']['login'];
+            $this->id = $_SESSION['login']['id'];
+        }
     } 
     public function register($login, $password)
     {
@@ -74,17 +80,12 @@ class Player
                 // Execute the statement with parameter binding
                 $select->execute(array(':login' => $login));
                 $result = $select->fetch();
-                
                 // Create the session
-                $_SESSION['user'] = [
+                $_SESSION['login'] = [
                     'id' => $result['id'],
                     'login' => $login,
                 ];
-                
-                // Redirect to the profile page
-                if (isset($_SESSION['user'])) {
-                    header('Location: profile.php');
-                }
+                header('Location: profile.php');
             } 
             else 
             {
@@ -98,9 +99,10 @@ class Player
     {   // vérification de la connexion
         if($this->isConnected()) 
             {
-            // fermeture de la connexion
-            echo "déconnexion réussie";
-            session_destroy();
+                // fermeture de la connexion
+                $this->login= null;
+                session_unset();
+                session_destroy();
             }
             else {
                 echo "Vous n'êtes pas connecté(e) !";
@@ -174,7 +176,12 @@ class Player
     }
     public function isConnected()
     {
-        return isset($_SESSION['user']) && isset($_SESSION['user']['id']) && isset($_SESSION['user']['login']);
+        if($this->login != null){
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     public function getAllInfos()
     {
@@ -184,15 +191,13 @@ class Player
                 <thead>
                     <tr>
                         <th>id</td>
-                        <th>login</td>
-                        <th>password</td>
+                        <th>login</td>   
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <th><?php echo $this->id; ?></td>
                         <td><?php echo $this->login; ?></td>
-                        <td><?php echo $this->password; ?></td>
                     </tr>
                 </tbody>
             </table>
@@ -214,57 +219,93 @@ class Player
     {
         if($this->isConnected()) 
         {
-            echo "login : " . $this->login . "<br>";
+            return $this->login;
         }
         else {
             echo "Vous devez être connecté(e) pour voir vos informations !";
         }
     }
-        public function getId()
+    public function getId()
     {
         return $this->id;
     }
-    public function getScore($login, $level)
-{
-    $stmt = $this->db->getPdo()->prepare("SELECT score FROM player_score WHERE login = ? AND level = ?");
-    $stmt->execute([$login, $level]);
-    $score = $stmt->fetch(PDO::FETCH_ASSOC)['score'];
-    return $score;
-}
+    public function saveScore($level, $coups)
+    {
+        $stmt = $this->db->getPdo()->prepare("INSERT INTO player_score (player_id, level, coups) VALUES (?, ?, ?)");
+        $stmt->execute([$this->id, $level, $coups]);
+    }
+    public function getScore($level)
+    {
+        $stmt = $this->db->getPdo()->prepare("SELECT * FROM player_score WHERE player_id = :player_id AND level = :level ORDER BY coups DESC");
+        $stmt->execute (array(
+            ':player_id' => $this->id,
+            ':level' => $level
+        ));
+        $fetchall = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        //Affichage du score
+        ?>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nbre de paires</th>
+                    <th>Score</th>
+                    <th>Nbre de Coups</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($fetchall as $row) {
+                    $score = $row['level'] / $row['coups'];
+                    ?>
+                    <tr>
+                        <td><?php echo $row['level']; ?></td>
+                        <td><?php echo $score; ?></td>
+                        <td><?php echo $row['coups']; ?></td>
+                    </tr>
+                    <?php
+                }
+                ?>
+            </tbody>
+        </table>
+        <?php
+    }
+    public function getGlobalScore()
+    {
+        // Requête pour récupérer le score global
+        $stmt = $this->db->getPdo()->prepare("SELECT * FROM player_score INNER JOIN players ON player_score.player_id = players.id WHERE level = :level ORDER BY coups limit 10");
+        // Exécution de la requête
+        $stmt->execute(array(':level' => $_GET['level']));
+        // Récupération des résultats avec fetch
+        $score = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Affichage du score
+        ?>
+        <table>
+            <thead>
+                <tr>
+                    <th>Login</th>
+                    <th>Score</th>
+                    <th>Nbre de paires</th>
+                    <th>Nbre de coups</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                foreach ($score as $row) {
+                    $score = $row['level'] / $row['coups'];
+                    ?>
+                    <tr>
+                        <td><?php echo $row['login']; ?></td>
+                        <td><?php echo $score; ?></td>
+                        <td><?php echo $row['level']; ?></td>
+                        <td><?php echo $row['coups']; ?></td>
+                    </tr>
+                    <?php
+                }
+                ?>
+            </tbody>
+        <?php
+    }
+
 
 }
-
-
-//$user = new Userpdo();
-// test register PDO   //OK
-//echo $user->register('test1', 'test1', 'test1@test.fr', 'testnom1', 'testprenom1');
-
-//test connect  PDO //OK
-//echo $user->connect('test2', 'test2');
-
-//test disconnect PDO  //OK
-//echo $user->disconnect();
-
-//test update PDO //OK
-//echo $user->update('test', 'test', 'test@test.fr', 'testnom', 'testprenom');
-
-//test isConnected PDO  //OK
-//echo $user->isConnected();
-
-//test getAllInfos PDO  //OK
-//echo $user->getAllInfos();
-
-//test getLogin PDO //OK
-//echo $user->getLogin();
-
-/* echo "<br>";
-echo $user->login;
-echo "<br>";
-echo $user->email;
-echo "<br>";
-echo $user->firstname;
-echo "<br>";
-echo $user->lastname; */
-
-
-?>

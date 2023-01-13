@@ -2,9 +2,9 @@
 <?php require_once 'includes/header.php'; ?>
 
 <?php
-$_SESSION['login'] = $login; // Set la session login
+/* $_SESSION['login'] = $login; // Set la session login */
 // vérifier l'état du joueur, pour la protection des pages privées
-if (!isset($_SESSION['login'])) {
+if (!$player->isConnected()) {
     // Le joueur n'est pas connecté, rediriger vers la page de connexion
     header('Location: login.php');
     exit();
@@ -17,65 +17,45 @@ $player = new Player($db);
 
 // Vérifier si le joueur est connecté
 if ($player->isConnected()) {
-    // Créer une instance de la classe Score
-    $score = new Score($db);
-    var_dump($_SESSION['login']);
-    // Récupérer les données du joueur
-    $playerScore = $score->getPlayerScore($player->id);
-    if (!empty($playerScore)) {
-        ?>
-        <main class="main">
-        <a href="index.php"><img src="assets/img/btn-back.png"></a>
-            <section class="container">
-                <h1>Profil</h1>
-                <div class="row mb-3">
-                    <div class="col mb-3">
-                        <h3 class="text-center">Bienvenue <?php echo $_SESSION['user']['login']; ?></h3>
-                        <a href="game.php"><h3>Jouer</h3></a>
-                        <a href="global_scores.php"><h3>Score global</h3></a>
-                    </div>
-                <div class="row mb-3">
-                    <div class="col mb-3">
-                        
-                        Votre score : <?php $playerScore[0]['score']; ?>
-                    </div>
-                </div> <!--end row--> 
-            </section>
-<?php
-    } 
-    else 
-    {
-?>          
-            <a href="index.php"><img src="assets/img/btn-back.png"></a>
-            <section class="container">        
-                <div class="row mb-3">
-                    <div class="col mb-3">
-                        <h3 class="text-center">Bienvenue <?php echo $_SESSION['user']['login']; ?></h3>
-                        <?php //var_dump($_SESSION['login']); ?>
-                        <a href="game.php"><h3>Jouer</h3></a>
-                        <a href="global_score.php"><h3>Score global</h3></a>
-                        </form>                    
-                    </div>
-                <div class="row mb-3">
-                    <div class="col mb-3">
-                        <h3 class="text-center p-5">Vous n'avez pas encore de score</h3>
-                    </div>
-                </div> <!--end row-->
-            </section>
-<?php
-    } 
-} 
-else 
-{
-?>
-                <div class="row mb-3">
-                    <div class="col mb-3">
-<?php
-    // L'utilisateur n'est pas connecté, afficher le formulaire de connexion/inscription
-    header('Location: login.php');
+
+    $perso = $player->getAllInfos();
+
 }
-?>
-                    </div>
-                </div> <!--end row-->
+
+    // Récupérer les données du joueur
+
+    ?>
+    <body id="profile">
+        <a class="btn-back" href="index.php"><img src="assets/img/btn-back.png"></a>
+        <main class="d-flex align-items-center justify-content-center mx-auto h-100">
+            <div class="col mx-auto">
+                <form method="get" action="">
+                    <select name="level">
+                        <option value="3">3 paires</option>
+                        <option value="4">4 paires</option>
+                        <option value="5">5 paires</option>
+                        <option value="6">6 paires</option>
+                        <option value="7">7 paires</option>
+                        <option value="8">8 paires</option>
+                        <option value="9">9 paires</option>
+                        <option value="10">10 paires</option>
+                        <option value="11">11 paires</option>
+                        <option value="12">12 paires</option>
+                    </select>
+                    <input type="submit" value="Choisir le niveau des scores" class="btn btn-danger m-2">
+                </form>
+                <?php
+                if(empty($_GET)) {
+                    $_GET['level'] = 3;
+                }
+                $player->getScore($_GET['level']);
+                ?>
+                <br>
+                </form><br>                    
+                
+            </div>
+
             </section>
         </main>
+
+<?php require_once 'includes/footer.php'; ?>

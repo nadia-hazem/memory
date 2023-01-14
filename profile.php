@@ -16,46 +16,55 @@ $db = new DbConnect();
 $player = new Player($db);
 
 // Vérifier si le joueur est connecté
-if ($player->isConnected()) {
+if ($player->isConnected()) { ?>
 
-    $perso = $player->getAllInfos();
+    <h1 class="panel-title">Vos infos personnelles</h1>
+    <div class="panel">
+        <div class="col inner-panel">
+            <?php $perso = $player->getAllInfos(); ?>
+        </div>
+    </div>
+    <div class="spaceone"></div>
 
+    <?php
 }
-
     // Récupérer les données du joueur
-
     ?>
     <body id="profile">
         <a class="btn-back" href="index.php"><img src="assets/img/btn-back.png"></a>
-        <main class="d-flex align-items-center justify-content-center mx-auto h-100">
-            <div class="col mx-auto">
-                <form method="get" action="">
-                    <select name="level">
-                        <option value="3">3 paires</option>
-                        <option value="4">4 paires</option>
-                        <option value="5">5 paires</option>
-                        <option value="6">6 paires</option>
-                        <option value="7">7 paires</option>
-                        <option value="8">8 paires</option>
-                        <option value="9">9 paires</option>
-                        <option value="10">10 paires</option>
-                        <option value="11">11 paires</option>
-                        <option value="12">12 paires</option>
-                    </select>
-                    <input type="submit" value="Choisir le niveau des scores" class="btn btn-danger m-2">
-                </form>
-                <?php
-                if(empty($_GET)) {
-                    $_GET['level'] = 3;
-                }
-                $player->getScore($_GET['level']);
-                ?>
-                <br>
-                </form><br>                    
-                
-            </div>
+        <div class="wrapper">
+            <main class="profile">
+                <div class="panel">
+                    <div class="col inner-panel">
+                        <form method="get" class="select">
+                            <select name="level">
+                                <option value="3">3 paires</option>
+                                <option value="4">4 paires</option>
+                                <option value="5">5 paires</option>
+                                <option value="6">6 paires</option>
+                                <option value="7">7 paires</option>
+                                <option value="8">8 paires</option>
+                                <option value="9">9 paires</option>
+                                <option value="10">10 paires</option>
+                                <option value="11">11 paires</option>
+                                <option value="12">12 paires</option>
+                            </select>
+                            <input type="submit" value="Choisir le niveau des scores" class="">
+                        </form>
+                    </div>
 
-            </section>
-        </main>
+                    <?php
+                    if(empty($_GET)) {
+                        $_GET['level'] = 3;
+                    }
+                    $player->getScore($_GET['level']);
+                    ?>
+                    <br>
+                    <br>                    
+                    
+                </div> 
+            </main>
+            <div class="push"></div>
+        </div> <!-- /wrapper -->
 
 <?php require_once 'includes/footer.php'; ?>

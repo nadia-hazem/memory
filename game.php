@@ -8,10 +8,6 @@ if (!$player->isConnected()) {
     exit();
 } ?>
 
-<!-- <div class="player-name">
-    <?php echo $player->getLogin() . " est connecté"; ?>
-</div> -->
-
 <?php
 // Vérifier si le niveau a été sélectionné
 if (isset($_POST['level'])) {
@@ -91,24 +87,27 @@ unset($_POST['card']);
                 </div>
 
             <?php } 
-            if(isset($_SESSION['level']) && $game -> checkEnd()) {
+            if(isset($_SESSION['level']) && $game -> checkEnd()) 
+            {
                 unset($_SESSION['new']);
             
                 ?>
-                <div class="text-center mb-5 mx-auto">
-                    <h2 class="text-center">Bravo, vous avez gagné !</h2>
-                <?php
-                $score = $_SESSION['level'] / $_SESSION['coup'];
-                $player->saveScore($_SESSION['level'], $_SESSION['coup'])
-                ?>
-                <br>
-                <h3 class="text-center">Votre score est de <?= $score; ?></h3>
-                <h4 class="text-center">Vous avez fait <?= $_SESSION['coup']; ?> coups</h4>
-                <br>
-            <?php } ?>
+                <div class="victory text-center py-auto px-auto justify-content-center align-items-center">
+                    <h2 class="text-center pt-5">Bravo, la partie est terminée !</h2>
+                    <?php
+                    $score = $_SESSION['level'] / $_SESSION['coup'];
+                    $player->saveScore($_SESSION['level'], $_SESSION['coup'])
+                    ?>
+                    <br>
+                    <h3 class="text-center">Votre score est de <?= $score; ?></h3>
+                    <h3 class="text-center">Vous avez fait <?= $_SESSION['coup']; ?> coups</h3>
+                    <br>
+                    <a class="btn btn-primary align-center text-white" href='game.php?reset=true'>Reset</a>
+                    <?php 
+            }       ?>
                 </div>
                 <div class="text-center mb-5 mx-auto">
-                    <a class="btn btn-info align-center" href='game.php?reset=true'>Relancer</a>
+                    <a class="btn btn-primary text-white align-center" href='game.php?reset=true'>Reset</a>
                 <br><br>
                 </div>
         </section>

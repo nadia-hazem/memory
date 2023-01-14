@@ -245,12 +245,12 @@ class Player
 
         //Affichage du score
         ?>
-        <table>
+        <table class="scoreProfile">
             <thead>
                 <tr>
-                    <th>Nbre de paires</th>
+                    <th>Paires</th>
                     <th>Score</th>
-                    <th>Nbre de Coups</th>
+                    <th>Coups</th>
                 </tr>
             </thead>
             <tbody>
@@ -285,8 +285,8 @@ class Player
                 <tr>
                     <th>Login</th>
                     <th>Score</th>
-                    <th>Nbre de paires</th>
-                    <th>Nbre de coups</th>
+                    <th>Paires</th>
+                    <th>Coups</th>
                 </tr>
             </thead>
             <tbody>
@@ -304,6 +304,7 @@ class Player
                 }
                 ?>
             </tbody>
+        </table>
         <?php
     }
 

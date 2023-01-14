@@ -19,33 +19,40 @@ $player = new Player($db);
     ?>
     <body id="scores">
         <a class="btn-back" href="index.php"><img src="assets/img/btn-back.png"></a>
-        <main class="d-flex flex-fill align-items-center justify-content-center mx-auto h-100">
-            <div class="col mx-auto">
-                <h1 class="text-center">Classement</h1>
-                <form method="get" action="">
-                    <select name="level">
-                        <option value="3">3 paires</option>
-                        <option value="4">4 paires</option>
-                        <option value="5">5 paires</option>
-                        <option value="6">6 paires</option>
-                        <option value="7">7 paires</option>
-                        <option value="8">8 paires</option>
-                        <option value="9">9 paires</option>
-                        <option value="10">10 paires</option>
-                        <option value="11">11 paires</option>
-                        <option value="12">12 paires</option>
-                    </select>
-                    <input type="submit" value="Choisir le niveau des scores" class="btn btn-danger m-2">
-                </form>
-                <?php
-                if(empty($_GET)) {
-                    $_GET['level'] = 3;
-                }
-                $player->getGlobalScore($_GET['level']);
-                ?>                  
-                
-            </div>
+        <div class="wrapper">
+            <main>
+                <h1 class=" panel-title">Classement</h1>
+                <div class="panel">                    
+                    <div class="col inner-panel">
+                        <form method="get" class="select">
+                            <select name="level">
+                                <option value="3">3 paires</option>
+                                <option value="4">4 paires</option>
+                                <option value="5">5 paires</option>
+                                <option value="6">6 paires</option>
+                                <option value="7">7 paires</option>
+                                <option value="8">8 paires</option>
+                                <option value="9">9 paires</option>
+                                <option value="10">10 paires</option>
+                                <option value="11">11 paires</option>
+                                <option value="12">12 paires</option>
+                            </select>
+                            <input type="submit" value="Choisir le niveau des scores" class="">
+                        </form>
+                    </div>
 
-        </main>
+                    <?php
+                    if(empty($_GET)) {
+                        $_GET['level'] = 3;
+                    }
+                    $player->getGlobalScore($_GET['level']);
+                    ?>   
+                    <br>
+                    <br>                    
+            
+                </div>
+            </main>
+            <div class="push"></div>
+        </div> <!-- /wrapper -->
 
 <?php require_once 'includes/footer.php'; ?>

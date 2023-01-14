@@ -26,42 +26,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 ?>
 <body id="login">
     <a class="btn-back" href="index.php"><img src="assets/img/btn-back.png"></a>
-    <main class="flex-fill d-flex align-items-center justify-content-end mt-5 mr-5">  
-        <section class="d-flex align-items-center ">
-            <div class=" loginform col mx-auto float-right ">
-                <h1>Connexion</h1>
-                <!-- Login form -->
-                <form class="form_global" method="post" action="login.php">
-                    <div class="row mb-3">
-                        <div class="col col-md-6">
-                            <label for="login">Login :</label>
-                        </div>
-                        <div class="col md-6">
-                            <input type="text" id="login" name="login">
-                        </div>
-                    </div> <!--end row-->
+    <div class="wrapper">
+        <main>  
+            <div class="row justify-content-center">          
+                <div class="col loginform">
+                    <h1 class="font">Connexion</h1>        
+                    <!-- Login form -->
+                    <form class="col" method="post" action="login.php">
+                        <div class="row justify-between">
+                            <div class="col">
+                                <label for="login">Login :</label>
+                            </div>
+                            <div class="col">
+                                <input type="text" id="login" name="login">
+                            </div>
+                        </div> <!--end row-->
 
-                    <div class="row mb-3">
-                        <div class="col md-6">
-                            <label for="password">Mot de passe :</label>
-                        </div>
-                        <div class="col md-6">
-                            <input type="password" id="password" name="password">
-                        </div>
-                    </div> <!--end row-->
-                    <br>
-                    <div class="row mb-3">
-                        <div class="col">
-                            <input type="submit" value="Connexion" class="btn btn-success">
-                        </div>
-                    </div> <!--end row-->
+                        <div class="row justify-between">
+                            <div class="col">
+                                <label for="password">Mot de passe :</label>
+                            </div>
+                            <div class="col">
+                                <input type="password" id="password" name="password">
+                            </div>
+                        </div> <!--end row-->
 
-                </form> <!--end form-->
-                <br>
-                <div class="d-inline-flex justify-content-center">
-                    Vous êtes nouveau ici ?&nbsp;
-                    <a href="register.php" class="inline-block">Inscription</a>
-                </div>
-            </div>
-        </section>
-    </main>
+                        <div class="spaceone"></div>
+
+                        <div class="row">
+                            <div class="col">
+                                <input type="submit" value="Connexion"  class="button success">
+                            </div>
+                        </div> <!--end row-->
+
+                        
+                        
+                        <div class="row justify-content-center">
+                            <p class="text-black">Vous etes nouveau ici ?&nbsp;<a href="login.php">Inscription</a></p>
+                        </div>
+                    </form> <!--end form-->
+                </div> <!--end col-->
+            </div> <!--end row-->
+        </main>
+        <div class="push"></div>
+    </div> <!-- /wrapper -->

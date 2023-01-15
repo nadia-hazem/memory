@@ -7,7 +7,7 @@ $db = new DbConnect();
 // Créer une instance de la classe Player
 $player = new Player($db);
 
-// Check if the user is logged in
+// Vérifier si le joueur est connecté
 if ($player->isConnected()) {
     $login = $player->getLogin();
 
@@ -18,6 +18,7 @@ if ($player->isConnected()) {
         <main class="index">
             
             <?php
+            // Le jour est connecté, afficher le menu de niveau
             if(isset($_POST['level'])) {
                 $level = $_POST['level'];
                 header("Location: game.php?level=$level");
@@ -25,7 +26,7 @@ if ($player->isConnected()) {
                 }  
             ?>
             <?php } else { 
-            // The user is not logged in, show the login/registration links ?>
+            // Le joueur n'est pas connecté, monter le menu adéquat ?>
                 <body id="index">
                     <main class="index"> -->
                         <!-- <div class="col-md-6 mx-auto align-self-center mt-5">

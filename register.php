@@ -28,14 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Les mots de passe ne correspondent pas.";
     }
     else {
-        // The form data is valid, continue with registration
+        // Le formulaire est valide, enregistrer le joueur
         $error = $player->register($login, $password);
         header ("Refresh:1; url=Location: login.php");
     }
 }
 ?>
 <body id="register">
-    <a class="btn-back" href="index.php"><img src="assets/img/btn-back.png"></a>
     <div class="wrapper">
         <main>  
             <div class="row justify-content-center">          

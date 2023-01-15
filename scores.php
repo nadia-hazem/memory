@@ -18,7 +18,6 @@ $player = new Player($db);
 // Récupérer les données des joueurs
     ?>
     <body id="scores">
-        <a class="btn-back" href="index.php"><img src="assets/img/btn-back.png"></a>
         <div class="wrapper">
             <main>
                 <h1 class=" panel-title">Classement</h1>
@@ -42,9 +41,10 @@ $player = new Player($db);
                     </div>
 
                     <?php
+                    // Récupérer les données du joueur
                     if(empty($_GET)) {
                         $_GET['level'] = 3;
-                    }
+                    } // Afficher le classement
                     $player->getGlobalScore($_GET['level']);
                     ?>   
                     <br>

@@ -23,27 +23,27 @@ class Player
     } 
     public function register($login, $password)
     {
-        // Validate the form fields
+        // Valider les données
         if ($login != "" && $password != "") {
-            // Check if the login already exists
+            // Vérifier si le login existe déjà
             $request = "SELECT * FROM players WHERE login = :login ";
-            // Prepare the SQL statement
+            // Préparer la requête SQL
             $select = $this->db->getPdo()->prepare($request);
-            // Execute the statement with parameter binding
+            // Exécuter la requête avec le binding des paramètres
             $select->execute(array(':login' => $login));
-            // Retrieve the results
+            // Récupérer le résultat
             $fetch = $select->fetchAll();
             $row = count($fetch);
             
-            // Hash the password
+            // Hasher le mot de passe
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             
-            // If the login does not exist, insert the new login and hashed password into the database
+            // Si le login n'existe pas, on peut l'enregistrer
             if ($row == 0) {
                 $register = "INSERT INTO players (login, password) VALUES (:login, :password)";
-                // Prepare the SQL statement
+                // Préparer la requête SQL
                 $insert = $this->db->getPdo()->prepare($register);
-                // Execute the statement with parameter binding
+                // Executer la requête avec le binding des paramètres
                 $insert->execute(array(
                     ':login' => $login,
                     ':password' => $hashed_password
@@ -62,25 +62,29 @@ class Player
     }
     public function connect($login, $password)
     {
-        // Check if login and password fields are not empty
+        // Vérifier si les champs formulaire ont bien été remplis
         if ($login != "" && $password != "") {
-            // Retrieve hashed password from database for the specified login
+            // Récupérer le mot de passe hashé dans la bdd
             $request = "SELECT password FROM players WHERE login = :login";
+            // Préparer la requête SQL
             $select = $this->db->getPdo()->prepare($request);
+            // Exécuter la requête avec le binding des paramètres
             $select->execute(array(':login' => $login));
+            // Récupérer le résultat
             $result = $select->fetch();
+            // Récupérer le mot de passe hashé
             $hashed_password = $result['password'];
             
-            // Verify the password
+            // Verifier si le mot de passe est correct
             if (password_verify($password, $hashed_password)) {
-                // Password is correct, continue with login
+                // Le mot de passe est correct, on peut créer la session
                 $request = "SELECT * FROM players WHERE login = :login";
-                // Prepare the SQL statement
+                // Préparer la requête SQL
                 $select = $this->db->getPdo()->prepare($request);
-                // Execute the statement with parameter binding
+                // Exécuter la requête avec le binding des paramètres
                 $select->execute(array(':login' => $login));
                 $result = $select->fetch();
-                // Create the session
+                // Créer la session
                 $_SESSION['login'] = [
                     'id' => $result['id'],
                     'login' => $login,
@@ -111,22 +115,22 @@ class Player
     public function delete()
     {
         if ($this->isConnected()) {
-            // Delete the player's score
+            // Effacer les scores du joueur
             $stmt = $this->db->getPdo()->prepare("DELETE FROM player_score WHERE player_id = :player_id");
             $stmt->execute(['player_id' => $this->id]);
     
-            // Delete the player's global score
+            // Effacer les scores du joueur du classement global
             $stmt = $this->db->getPdo()->prepare("DELETE FROM global_score WHERE player_id = :player_id");
             $stmt->execute(['player_id' => $this->id]);
     
-            // Delete the player
+            // Effacer le joueur
             $stmt = $this->db->getPdo()->prepare("DELETE FROM players WHERE id = :id");
             $stmt->execute(['id' => $this->id]);
-    
+            // fermeture de la connexion
             session_destroy();
-            echo "Utilisateur supprimé !";
+            echo "Utilisateur supprime !";
         } else {
-            echo "Vous devez être connecté pour supprimer votre compte !";
+            echo "Vous devez etre connecte pour supprimer votre compte !";
         }
     }
     public function update($login, $password)
@@ -231,12 +235,16 @@ class Player
     }
     public function saveScore($level, $coups)
     {
+        //Enregistrement du score dans la table player_score
         $stmt = $this->db->getPdo()->prepare("INSERT INTO player_score (player_id, level, coups) VALUES (?, ?, ?)");
+        //Exécution de la requête
         $stmt->execute([$this->id, $level, $coups]);
     }
     public function getScore($level)
     {
+        //Récupération des scores du joueur
         $stmt = $this->db->getPdo()->prepare("SELECT * FROM player_score WHERE player_id = :player_id AND level = :level ORDER BY coups DESC");
+        //Exécution de la requête
         $stmt->execute (array(
             ':player_id' => $this->id,
             ':level' => $level
@@ -307,6 +315,4 @@ class Player
         </table>
         <?php
     }
-
-
 }

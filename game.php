@@ -19,18 +19,18 @@ if (isset($_POST['level'])) {
     // Créer une instance de la classe Game
     $game->getCards();
     /* var_dump($_SESSION['board']); */
-    // créer les cartes
+
     // enlever variable post
     $_POST['level'] = null;
     unset($_POST['level']);
 }
 if(isset($_SESSION['level'])){
+    // Créer les cartes
     for ($i = 0; $i < ((int)$_SESSION['level']*2); $i++) {
         $card= new Card($i);
         $cards[] = $card;
     }
 }
-
 // Vérifier le match
 if (isset($_SESSION['flip2'])){
     // appel de la fonction checkMatch
@@ -40,77 +40,80 @@ if (isset($_SESSION['flip2'])){
 $_POST['card'] = null;
 unset($_POST['card']);
 ?>
-<!-- Display the game level and score -->
+<!-- A fficher le tableau -->
 <body id="game">
-    <a class="btn-back" href="index.php"><img src="assets/img/btn-back.png"></a>
-    <!-- Afficher le tableau -->
-    <main class="game d-flex flex-fill align-items-center justify-content-center mx-auto h-100">
+    <div class="wrapper">
+        <!-- Afficher le tableau -->
+        <main class="game align-content-center justify-content-center">
 
-        <section class="board m-auto">
-            <?php if (!isset($_SESSION['new']))
-            { ?>
-                <div class="level h-60">
-                    <form method="post" action="">
-                        <select name="level">
-                            <option value="3">3 paires</option>
-                            <option value="4">4 paires</option>
-                            <option value="5">5 paires</option>
-                            <option value="6">6 paires</option>
-                            <option value="7">7 paires</option>
-                            <option value="8">8 paires</option>
-                            <option value="9">9 paires</option>
-                            <option value="10">10 paires</option>
-                            <option value="11">11 paires</option>
-                            <option value="12">12 paires</option>
-                        </select>
-                        <input type="submit" value="Jouer" class="btn btn-danger m-2">
-                    </form>
-                </div>
-                <?php      
-            }
+            <section class="board">
+                <?php if (!isset($_SESSION['new']))
+                { ?>
+                    <div class="level">
+                        <form method="post" action="">
+                            <select name="level">
+                                <option value="3">3 paires</option>
+                                <option value="4">4 paires</option>
+                                <option value="5">5 paires</option>
+                                <option value="6">6 paires</option>
+                                <option value="7">7 paires</option>
+                                <option value="8">8 paires</option>
+                                <option value="9">9 paires</option>
+                                <option value="10">10 paires</option>
+                                <option value="11">11 paires</option>
+                                <option value="12">12 paires</option>
+                            </select>
+                            <input type="submit" value="Jouer" class="button success">
+                        </form>
+                    </div>
+                    <?php      
+                }
 
-            if(isset($_SESSION['new'])) { 
-                /* var_dump($_SESSION['level']) */ ?>
-                <div class="">
-                    <form action="verif.php" method="post" class="cards_form flex-wrap justify-content-center align-content-center">
-                    <?php
-                    foreach ($cards as $card) { ?>
-                        <div class=" ">
+                if(isset($_SESSION['new'])) { 
+                    /* var_dump($_SESSION['level']) */ ?>
+                    <div>
+                        <!--les class affichent les cartes en grille-->
+                        <form action="verif.php" method="post" class="cards_form row wrap justify-content-center">
                             <?php
-                            $card->displayCard();
+                            foreach ($cards as $card) { ?>
+                                <div class="">
+                                    <?php
+                                    $card->displayCard();
+                                    ?>
+                                    
+                                </div>
+                            <?php
+                            }
                             ?>
-                        </div>
-                    <?php
-                    }
-                    ?>
-                    </form>
-                </div>
+                        </form>
+                    </div>
+                    <div class="text-center">
+                        <a class="button danger text-white align-center" href='game.php?reset=true'>Reset</a>
+                    </div>
 
-            <?php } 
-            if(isset($_SESSION['level']) && $game -> checkEnd()) 
-            {
-                unset($_SESSION['new']);
-            
-                ?>
-                <div class="victory text-center py-auto px-auto justify-content-center align-items-center">
-                    <h2 class="text-center pt-5">Bravo, la partie est terminée !</h2>
-                    <?php
-                    $score = $_SESSION['level'] / $_SESSION['coup'];
-                    $player->saveScore($_SESSION['level'], $_SESSION['coup'])
+                <?php } 
+                if(isset($_SESSION['level']) && $game -> checkEnd()) 
+                { // Vérifier si la partie est terminée
+                    unset($_SESSION['new']);
+                
                     ?>
-                    <br>
-                    <h3 class="text-center">Votre score est de <?= $score; ?></h3>
-                    <h3 class="text-center">Vous avez fait <?= $_SESSION['coup']; ?> coups</h3>
-                    <br>
-                    <a class="btn btn-primary align-center text-white" href='game.php?reset=true'>Reset</a>
-                    <?php 
-            }       ?>
-                </div>
-                <div class="text-center mb-5 mx-auto">
-                    <a class="btn btn-primary text-white align-center" href='game.php?reset=true'>Reset</a>
-                <br><br>
-                </div>
-        </section>
-    </main>
+                    <div class="victory text-center justify-content-center align-content-center">
+                        <h2 class="text-center pt-5">Bravo, la partie est terminee !</h2>
+                        <?php
+                        $score = $_SESSION['level'] / $_SESSION['coup'];
+                        $player->saveScore($_SESSION['level'], $_SESSION['coup'])
+                        ?>
+                        <br>
+                        <h3 class="text-center arial">Votre score est de <?= $score; ?></h3>
+                        <h3 class="text-center arial">En&nbsp; <?= $_SESSION['coup']; ?> coups</h3>
+                        <a class="button danger text-white" href='game.php?reset=true'>Reset</a>
+                        <?php 
+                }       ?>
+                    </div>
+                    
+            </section>
+        </main>
+        <div class="push"></div>
+    </div> <!-- wrapper -->
 <?php
     require_once 'includes/footer.php'; ?>

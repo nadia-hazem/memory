@@ -35,6 +35,7 @@ class Game {
     // methods
 
     public function reset() {
+        // Réinitialiser les variables de session
         unset($_SESSION['flip1']);
         unset($_SESSION['flip2']);
         unset($_SESSION['level']);
@@ -45,16 +46,19 @@ class Game {
     }
 
     public function getCards() {
+        // Distribuer les cartes en double avec un tableau aléatoire
         $rand = array_rand($this->cards, (int)$_SESSION['level']);
         for ($i = 0; isset($rand[$i]); $i++) {
             $board[] = $this->cards[$rand[$i]];
             $board[] = $this->cards[$rand[$i]];
         }
+        // Mélanger les cartes
         shuffle($board);
         $_SESSION['board'] = $board;
     }
 
     public function checkMatch() {
+        // Vérifier si les cartes sont identiques
         if ($_SESSION['flip1']['front'] === $_SESSION['flip2']['front']) {
             $_SESSION['find'][] = $_SESSION['flip1']['id'];
             $_SESSION['find'][] = $_SESSION['flip2']['id'];
@@ -62,15 +66,18 @@ class Game {
             unset($_SESSION['flip2']);
         }
         else {
+            // Les cartes ne sont pas identiques
             unset($_SESSION['flip2']);
             unset($_SESSION['flip1']);
         }
+        // Vérifier si le jeu est terminé
         if($this->checkEnd()==false){
             $_SESSION['coup']++;
             header('Refresh: 1; URL=game.php');
         }
     }
     public function checkEnd() {
+        // Vérifier si le jeu est terminé
         if (count($_SESSION['find']) === (int)$_SESSION['level'] * 2) {
             return true;
         }
@@ -78,7 +85,5 @@ class Game {
             return false;
         }
     }
-
-
 }
 ?>

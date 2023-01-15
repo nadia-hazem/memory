@@ -25,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST')
 
 ?>
 <body id="login">
-    <a class="btn-back" href="index.php"><img src="assets/img/btn-back.png"></a>
     <div class="wrapper">
         <main>  
             <div class="row justify-content-center">          

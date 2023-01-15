@@ -21,7 +21,26 @@ if ($player->isConnected()) { ?>
     <h1 class="panel-title">Vos infos personnelles</h1>
     <div class="panel">
         <div class="col inner-panel">
-            <?php $perso = $player->getAllInfos(); ?>
+            <div class="row justify-between">
+
+                <div class="col">
+                    <?php $perso = $player->getAllInfos(); ?>
+                </div> <!-- /col -->
+
+                <?php
+                    if (isset($_POST['delete'])) {
+                        $player->delete();
+                    }
+                ?>
+                <div class="col">
+                    <form method="post">
+                        <h5  class="text-white arial"><span class="text-red bold">Attention ! </span>ceci supprimera définitivement votre compte</h5>
+                        <input type="submit" name="delete" value="Supprimer mon compte" class="button danger">
+                    </form>
+                </div> <!-- /col -->
+
+            </div> <!-- /row -->
+            
         </div>
     </div>
     <div class="spaceone"></div>
@@ -31,10 +50,10 @@ if ($player->isConnected()) { ?>
     // Récupérer les données du joueur
     ?>
     <body id="profile">
-        <a class="btn-back" href="index.php"><img src="assets/img/btn-back.png"></a>
         <div class="wrapper">
             <main class="profile">
                 <div class="panel">
+                    <h1 class="panel-title text-white">Vos scores</h1>
                     <div class="col inner-panel">
                         <form method="get" class="select">
                             <select name="level">
@@ -54,6 +73,7 @@ if ($player->isConnected()) { ?>
                     </div>
 
                     <?php
+                    // Récupérer les données du joueur
                     if(empty($_GET)) {
                         $_GET['level'] = 3;
                     }

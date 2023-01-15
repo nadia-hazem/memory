@@ -30,58 +30,74 @@ if (isset($_GET['reset'])) {
     </head>
 
     <body>
-        <div class="wrapper">
-            <header>
-                <?php
-                if ($player->isConnected()) {
-                ?>
-                <nav id="navigation" role="navigation" class="row flex-end">
-                    <ul>
-                        <li><p class="name font">Bienvenue <?= $player->getLogin() ?></p></li>
-                        <li><button class="btn info"><a href="profile.php">Profil</a></button></li>
-                        <li><button class="btn info"><a href="game.php">Jouer</a></button></li>
-                        <li><button class="btn info"><a href="scores.php">Classement</a></button></li>
-                        <li><button class="btn info"><a href="index.php?logout=true">Deconnexion</a></button></li>
+        <header>
+            <?php
+            // Si le joueur est connecté, afficher le menu
+            if ($player->isConnected()) {
+            ?>
+            <nav id="navigation" role="navigation" class="row flex-end">
+                <ul>
+                    <li><p class="name font">Bienvenue <?= $player->getLogin() ?></p></li>
+                    <li><button class="btn info"><a href="index.php">Accueil</a></button></li>
+                    <li><button class="btn info"><a href="profile.php">Profil</a></button></li>
+                    <li><button class="btn info"><a href="game.php">Jouer</a></button></li>
+                    <li><button class="btn info"><a href="scores.php">Classement</a></button></li>
+                    <li><button class="btn info"><a href="index.php?logout=true">Deconnexion</a></button></li>
+                </ul>
+            </nav>
+            <!-- version mobile -->
+            <div id="navigationmobile" role="navigation" class="col">
+                <div id="menuToggle">
+                    <input type="checkbox" />
+                
+                    <span></span>
+                    <span></span>
+                    <span></span>
+        
+                    <ul id="menu">
+                        <li><h4 class="name">Bienvenue <?= $player->getLogin() ?></h4></li>
+                        <li><a href="index.php">Accueil</a></li>
+                        <li><a href="profile.php">Profil</a></li>
+                        <li><a href="game.php">Jouer</a></li>
+                        <li><a href="scores.php">Classement</a></li>
+                        <li><a href="index.php?logout=true">Deconnexion</a></li>
                     </ul>
-                </nav>
-                <!-- version mobile -->
-                <nav id="navigationmobile" role="navigation">
-                    <input type="checkbox" id="toggle-nav" aria-label="open/close navigation">
-                    <label for="toggle-nav" class="nav-button"></label>
-                    <div class="nav-inner">
-                        <h4 class="name">Bienvenue <?= $player->getLogin() ?></h4>
-                        <a href="profile.php">Profil</a>
-                        <a href="game.php">Jouer</a>
-                        <a href="scores.php">Classement</a>
-                        <a href="index.php?logout=true">Deconnexion</a>
-                    </div>
-                </nav>
-                <?php
-                } 
-                else 
-                {
-                ?>
-                <nav id="navigation" role="navigation" class="row flex-end">
-                    <ul>
-                        <li><button class="btn info"><a href="index.php">Accueil</a></button></li>
-                        <li><button class="btn info"><a href="login.php">Connexion</a></button></li>
-                        <li><button class="btn info"><a href="register.php">Inscription</a></button></li>
+                </div>
+            </div>
+            <?php
+            } 
+            else 
+            {
+                // Sinon afficher le menu de connexion
+            ?>
+            <nav id="navigation" role="navigation" class="row flex-end">
+                <ul>
+                    <li><button class="btn info"><a href="index.php">Accueil</a></button></li>
+                    <li><button class="btn info"><a href="login.php">Connexion</a></button></li>
+                    <li><button class="btn info"><a href="register.php">Inscription</a></button></li>
+                </ul>
+            </nav>
+            <!-- version mobile -->
+            <div id="navigationmobile" role="navigation" class="col">
+                <!--They are acting like a real hamburger, not that McDonalds stuff.-->
+                <div id="menuToggle">
+                    <input type="checkbox" />
+                
+                    <span></span>
+                    <span></span>
+                    <span></span>
+        
+                    <ul id="menu">
+                        <li><a href="index.php">Accueil</a></li>
+                        <li><a href="login.php">Connexion</li>
+                        <li><a href="register.php">Inscription</a></li>
                     </ul>
-                </nav>
-                <!-- version mobile -->
-                <nav id="navigationmobile" role="navigation">
-                    <input type="checkbox" id="toggle-nav" aria-label="open/close navigation">
-                    <label for="toggle-nav" class="nav-button"></label>
-                    <div class="nav-inner">
-                        <a href="index.php">Accueil</a>
-                        <a href="login.php">Connexion</a>
-                        <a href="register.php">Inscription</a>
-                    </div>
-                </nav>
+                </div>
+            </div>
 
-                <?php
-                }
-                ?>
+            <?php
+            }
+            ?>
 
-            </header>
+        </header>
 

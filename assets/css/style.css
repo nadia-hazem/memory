@@ -63,12 +63,12 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'Simpsonfont', sans-serif;
     text-align: center;
     color: #007BA7!important;
+    font-weight: 500;
 }
 h4 {
     background:#FFD71D;
     padding: 0.7rem;
     border-radius: 0.5rem;
-    border: 10px solid #fff;
 }
 h6 {
     margin: O.2rem;
@@ -90,10 +90,15 @@ table {
 table tr td, table tr th {
     border: none!important;
     width: 300px;
+    color: white!important;
 }
 select {
     font-family:  'Simpsonfont', sans-serif;
     color: #007BA7;
+    font-size: 20px;
+    height: 38px;
+    vertical-align: middle;
+    border: 1px solid #007BA7;
 }
 label {
     font-family:  'Simpsonfont', sans-serif;
@@ -104,6 +109,9 @@ input {
     font-family:  'arial', sans-serif;
     color: #007BA7;
     margin-bottom: 1rem;
+    line-height: 2;
+    font-size: 20px;
+    height: 40px;
 }
 button, .button {
     display: inline-block;
@@ -130,6 +138,11 @@ button, .button {
     color: #fff;
     background-color: #dc3545;
     border-color: #dc3545;
+}
+.danger:hover {
+    color: #fff;
+    background-color: #aa2734;
+    border-color: #aa2734;
 }
 .success {
     color: #fff;

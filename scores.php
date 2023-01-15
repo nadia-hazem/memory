@@ -36,7 +36,7 @@ $player = new Player($db);
                                 <option value="11">11 paires</option>
                                 <option value="12">12 paires</option>
                             </select>
-                            <input type="submit" value="Choisir le niveau des scores" class="">
+                            <input type="submit" value="Choisir le niveau des scores" class="button success">
                         </form>
                     </div>
 

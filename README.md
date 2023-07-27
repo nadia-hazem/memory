@@ -1,2 +1,3 @@
 # memory
-Jeu de cartes à mémoriser par paires
+PHP Memory game with personal and global score.
+(Free design)

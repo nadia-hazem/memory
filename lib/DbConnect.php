@@ -7,7 +7,7 @@ class DbConnect
     public function __construct()
     {
         try {
-            $this->pdo = new PDO("mysql:host=localhost;dbname=memory", "root", "");
+            $this->pdo = new PDO("mysql:host=localhost;dbname=fqdbhzuh_memory", "fqdbhzuh_n0NAq79EJ", "tNvTEkztxMnhMWtURtBHPvB5EHROYGBf");
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
         }
